@@ -5,7 +5,7 @@ interface Props {
 }
 export function UsersList({ users }: Props) {
   return (
-    <table>
+    <table width="100%">
       <thead>
         <tr>
           <th>Picture</th>
@@ -18,7 +18,7 @@ export function UsersList({ users }: Props) {
       <tbody>
         {users.map((user) => {
           return (
-            <tr key={user.id.value}>
+            <tr key={user.cell}>
               <td>
                 <img src={user.picture.thumbnail} alt={user.name.first} />
               </td>
