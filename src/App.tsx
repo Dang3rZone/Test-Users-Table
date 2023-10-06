@@ -18,6 +18,11 @@ function App() {
     setSortByCountry((prevsState) => !prevsState);
   };
 
+  const handleDelete = (cell: string) => {
+    const filteredUsers = users.filter((user) => user.cell !== cell);
+    setUsers(filteredUsers);
+  };
+
   useEffect(() => {
     fetch(apiUsers)
       .then(async (res) => await res.json())
@@ -46,7 +51,11 @@ function App() {
         </button>
       </header>
       <main>
-        <UsersList showColors={showColors} users={sortedUsers} />
+        <UsersList
+          deleteUser={handleDelete}
+          showColors={showColors}
+          users={sortedUsers}
+        />
       </main>
     </div>
   );
