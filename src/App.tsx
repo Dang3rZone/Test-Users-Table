@@ -4,13 +4,20 @@ import { type User } from './types';
 import { UsersList } from './components/UsersList';
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
   const apiUsers = 'https://randomuser.me/api/?results=100';
+
+  const [users, setUsers] = useState<User[]>([]);
   const [showColors, setShowColors] = useState(false);
+  const [sortByCountry, setSortByCountry] = useState(false);
 
   const toggleColors = () => {
     setShowColors(!showColors);
   };
+
+  const toggleSortByCountry = () => {
+    setSortByCountry((prevsState) => !prevsState);
+  };
+
   useEffect(() => {
     fetch(apiUsers)
       .then(async (res) => await res.json())
@@ -22,14 +29,24 @@ function App() {
       });
   }, []);
 
+  const sortedUsers = sortByCountry
+    ? [...users].sort((a, b) => {
+        return a.location.country.localeCompare(b.location.country);
+      })
+    : users;
+
   return (
     <div>
       <h1>Prueba tabla usuarios :)</h1>
       <header>
         <button onClick={toggleColors}>Color Rows</button>
+        <button onClick={toggleSortByCountry}>
+          {' '}
+          {sortByCountry ? 'Do not order by country' : 'Order by country'}
+        </button>
       </header>
       <main>
-        <UsersList showColors={showColors} users={users} />
+        <UsersList showColors={showColors} users={sortedUsers} />
       </main>
     </div>
   );
