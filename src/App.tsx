@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { type User } from './types';
 import { UsersList } from './components/UsersList';
@@ -9,6 +9,7 @@ function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
+  const originalUsers = useRef<User[]>([]);
 
   const toggleColors = () => {
     setShowColors(!showColors);
@@ -23,11 +24,16 @@ function App() {
     setUsers(filteredUsers);
   };
 
+  const handleReset = () => {
+    setUsers(originalUsers.current);
+  };
+
   useEffect(() => {
     fetch(apiUsers)
       .then(async (res) => await res.json())
       .then((res) => {
         setUsers(res.results);
+        originalUsers.current = res.results;
       })
       .catch((err) => {
         console.log(err);
@@ -49,6 +55,7 @@ function App() {
           {' '}
           {sortByCountry ? 'Do not order by country' : 'Order by country'}
         </button>
+        <button onClick={handleReset}>Reset Users</button>
       </header>
       <main>
         <UsersList
