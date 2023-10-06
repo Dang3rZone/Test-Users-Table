@@ -9,6 +9,8 @@ function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [showColors, setShowColors] = useState(false);
   const [sortByCountry, setSortByCountry] = useState(false);
+  const [filterCountry, setFilterCountry] = useState<string | null>(null);
+
   const originalUsers = useRef<User[]>([]);
 
   const toggleColors = () => {
@@ -28,6 +30,18 @@ function App() {
     setUsers(originalUsers.current);
   };
 
+  const filteredUsers = typeof filterCountry === 'string' && filterCountry.length > 0
+    ? users.filter((user) => {
+      return user.location.country.toLowerCase().includes(filterCountry.toLowerCase());
+    })
+    : users;
+
+  const sortedUsers = sortByCountry
+    ? [...users].sort((a, b) => {
+        return a.location.country.localeCompare(b.location.country);
+      })
+    : filteredUsers;
+
   useEffect(() => {
     fetch(apiUsers)
       .then(async (res) => await res.json())
@@ -40,12 +54,6 @@ function App() {
       });
   }, []);
 
-  const sortedUsers = sortByCountry
-    ? [...users].sort((a, b) => {
-        return a.location.country.localeCompare(b.location.country);
-      })
-    : users;
-
   return (
     <div>
       <h1>Prueba tabla usuarios :)</h1>
@@ -56,6 +64,13 @@ function App() {
           {sortByCountry ? 'Do not order by country' : 'Order by country'}
         </button>
         <button onClick={handleReset}>Reset Users</button>
+        <input
+          type="text"
+          placeholder="Filter by country. Ex: Argentina"
+          onChange={(e) => {
+            setFilterCountry(e.target.value);
+          }}
+        />
       </header>
       <main>
         <UsersList
