@@ -4,3 +4,10 @@
   text-align: center;
   width: 100%;
 }
+
+.table--showColors tr:nth-child(2n) {
+  background: #333;
+}
+.table--showColors tr:nth-child(2n + 1) {
+  background: #555;
+}

@@ -17,13 +17,10 @@ export function UsersList({ deleteUser, showColors, users }: Props) {
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className={showColors ? 'table--showColors' : 'table'}>
         {users.map((user, index) => {
-          const backgroundColor = index % 2 === 0 ? '#333' : '#555';
-          const color = showColors ? backgroundColor : 'transparent';
-
           return (
-            <tr key={user.cell} style={{ backgroundColor: color }}>
+            <tr key={user.cell}>
               <td>
                 <img src={user.picture.thumbnail} alt={user.name.first} />
               </td>
