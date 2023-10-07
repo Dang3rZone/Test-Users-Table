@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import { type User } from './types';
 import { UsersList } from './components/UsersList';
@@ -30,17 +30,23 @@ function App() {
     setUsers(originalUsers.current);
   };
 
-  const filteredUsers = typeof filterCountry === 'string' && filterCountry.length > 0
-    ? users.filter((user) => {
-      return user.location.country.toLowerCase().includes(filterCountry.toLowerCase());
-    })
-    : users;
-
-  const sortedUsers = sortByCountry
-    ? [...users].sort((a, b) => {
-        return a.location.country.localeCompare(b.location.country);
+  const filteredUsers = useMemo(() => {
+    return typeof filterCountry === 'string' && filterCountry.length > 0
+      ? users.filter((user) => {
+        return user.location.country
+          .toLowerCase()
+          .includes(filterCountry.toLowerCase());
       })
-    : filteredUsers;
+      : users;
+  }, [users, filterCountry]);
+
+  const sortedUsers = useMemo(() => {
+    return sortByCountry
+      ? [...filteredUsers].sort((a, b) => {
+          return a.location.country.localeCompare(b.location.country);
+        })
+      : filteredUsers;
+  }, [filteredUsers, sortByCountry]);
 
   useEffect(() => {
     fetch(apiUsers)
