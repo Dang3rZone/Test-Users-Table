@@ -43,11 +43,18 @@ function App() {
   }, [users, filterCountry]);
 
   const sortedUsers = useMemo(() => {
-    return sorting === SortBy.COUNTRY
-      ? [...filteredUsers].sort((a, b) => {
-          return a.location.country.localeCompare(b.location.country);
-        })
-      : filteredUsers;
+    if (sorting === SortBy.NONE) return filteredUsers;
+
+    const compareProperties: Record<string, (user: User) => any> = {
+      [SortBy.COUNTRY]: (user) => user.location.country,
+      [SortBy.NAME]: (user) => user.name.first,
+      [SortBy.LAST]: (user) => user.name.last
+    };
+
+    return [...filteredUsers].sort((a, b) => {
+      const extractProperty = compareProperties[sorting];
+      return extractProperty(a).localeCompare(extractProperty(b));
+    });
   }, [filteredUsers, sorting]);
 
   const handleChangeSorting = (sort: SortBy) => {
