@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
-import { type User } from './types';
+import { SortBy, type User } from './types.d';
 import { UsersList } from './components/UsersList';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [showColors, setShowColors] = useState(false);
-  const [sortByCountry, setSortByCountry] = useState(false);
+  const [sorting, setSorting] = useState<SortBy>(SortBy.NONE);
   const [filterCountry, setFilterCountry] = useState<string | null>(null);
 
   const originalUsers = useRef<User[]>([]);
@@ -18,7 +18,9 @@ function App() {
   };
 
   const toggleSortByCountry = () => {
-    setSortByCountry((prevsState) => !prevsState);
+    const newSortingValue =
+      sorting === SortBy.NONE ? SortBy.COUNTRY : SortBy.NONE;
+    setSorting(newSortingValue);
   };
 
   const handleDelete = (cell: string) => {
@@ -41,12 +43,16 @@ function App() {
   }, [users, filterCountry]);
 
   const sortedUsers = useMemo(() => {
-    return sortByCountry
+    return sorting === SortBy.COUNTRY
       ? [...filteredUsers].sort((a, b) => {
           return a.location.country.localeCompare(b.location.country);
         })
       : filteredUsers;
-  }, [filteredUsers, sortByCountry]);
+  }, [filteredUsers, sorting]);
+
+  const handleChangeSorting = (sort: SortBy) => {
+    setSorting(sort);
+  };
 
   useEffect(() => {
     fetch(apiUsers)
@@ -66,8 +72,9 @@ function App() {
       <header>
         <button onClick={toggleColors}>Color Rows</button>
         <button onClick={toggleSortByCountry}>
-          {' '}
-          {sortByCountry ? 'Do not order by country' : 'Order by country'}
+          {sorting === SortBy.COUNTRY
+            ? 'Do not order by country'
+            : 'Order by country'}
         </button>
         <button onClick={handleReset}>Reset Users</button>
         <input
@@ -80,6 +87,7 @@ function App() {
       </header>
       <main>
         <UsersList
+          changeSorting={handleChangeSorting}
           deleteUser={handleDelete}
           showColors={showColors}
           users={sortedUsers}
