@@ -18,7 +18,7 @@ export function UsersList({ deleteUser, showColors, users }: Props) {
         </tr>
       </thead>
       <tbody className={showColors ? 'table--showColors' : 'table'}>
-        {users.map((user, index) => {
+        {users.map((user) => {
           return (
             <tr key={user.cell}>
               <td>

@@ -5,9 +5,9 @@
   width: 100%;
 }
 
-.table--showColors tr:nth-child(2n) {
+.table--showColors tr:nth-child(odd) {
   background: #333;
 }
-.table--showColors tr:nth-child(2n + 1) {
+.table--showColors tr:nth-child(even) {
   background: #555;
 }
